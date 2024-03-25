@@ -99,15 +99,17 @@ class Resize(object):
         self.__resize_method = resize_method
 
     def constrain_to_multiple_of(self, x, min_val=0, max_val=None):
-        y = (np.round(x / self.__multiple_of) * self.__multiple_of).astype(int)
+        if not isinstance(x, torch.Tensor):
+            x = torch.Tensor([x])
+        y = (torch.round(x / self.__multiple_of) * self.__multiple_of).to(torch.int32)
 
         if max_val is not None and y > max_val:
-            y = (np.floor(x / self.__multiple_of)
-                 * self.__multiple_of).astype(int)
+            y = (torch.floor(x / self.__multiple_of)
+                 * self.__multiple_of).to(torch.int32)
 
         if y < min_val:
-            y = (np.ceil(x / self.__multiple_of)
-                 * self.__multiple_of).astype(int)
+            y = (torch.ceil(x / self.__multiple_of)
+                 * self.__multiple_of).to(torch.int32)
 
         return y
 
